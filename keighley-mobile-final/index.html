@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="theme-color" content="#050505">
+<title>The Keighley — Mobile</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div id="stage">
+<img id="camera-poster" src="./camera.svg" alt="">
+<div id="vignette"></div><div id="letterbox"></div></div>
+<div id="status">Loading WebGL camera</div><div id="progress"><i></i></div>
+<div id="fallback"><div><strong>3D unavailable</strong><p>This browser did not provide WebGL. Open the page in Safari or Chrome with hardware acceleration enabled.</p></div></div>
+<main>
+<section class="section hero active" data-index="0"><div class="copy"><p class="kicker">IMAX 15/70 · Mobile study</p><h1><span>The</span><span>Keighley.</span></h1><p class="sub">A procedural large-format camera built to remain visible, responsive, and usable on a phone.</p></div></section>
+<section class="section" data-index="1"><div class="copy"><p class="kicker">01 · The format</p><h2>Fifteen perf.</h2><p class="body">IMAX 15/70 moves more than five feet of film through the gate every second. The image is enormous. So is the mechanical problem.</p><p class="note">334 ft/min · 24 fps · horizontal 65mm transport</p></div></section>
+<section class="section" data-index="2"><div class="copy"><p class="kicker">02 · Anatomy</p><h2>Built to separate.</h2><p class="body">Tap the components below. The selected assembly moves out from the body and highlights without covering the camera with floating labels.</p></div></section>
+<section class="section" data-index="3"><div class="copy"><p class="kicker">03 · Dialogue</p><h2>The blimp.</h2><p class="body">A sound-isolating housing surrounds the camera for dialogue work. The mobile version shows the shell closing around the rig instead of stacking another interface over it.</p></div></section>
+<section class="section" data-index="4"><div class="copy"><p class="kicker">04 · Eyelines</p><h2>The periscope.</h2><p class="body">A compact mirrored viewing path rises above the housing, preserving actor eyelines while the camera occupies the space between them.</p></div></section>
+<section class="section" data-index="5"><div class="copy"><p class="kicker">05 · Scale</p><h2>Built for a feature.</h2><p class="body">The engineering goal was not a quieter insert camera. It was a camera capable of carrying an entire large-format production.</p><div class="stats"><div class="stat"><strong>2M+</strong><span>Feet of film photographed</span></div><div class="stat"><strong>1.43:1</strong><span>Full IMAX presentation</span></div><div class="stat"><strong>24 FPS</strong><span>Five and a half feet each second</span></div></div></div></section>
+<section class="section" data-index="6"><div class="copy"><p class="kicker">06 · Operate</p><h2>Shoot the Odyssey.</h2><p class="body">Drag horizontally to pan. Use the sliders to tilt and change focus, compare the full frame with a standard crop, then roll the transport.</p></div></section>
+<section class="section" data-index="7"><div class="copy"><p class="kicker">07 · Legacy</p><h2>The Keighley.</h2><p class="body">Named for David Keighley, whose decades of large-format post-production helped define how IMAX images reached the screen.</p></div></section>
+</main>
+<div id="anatomy-ui"><div class="part-tabs"><button data-part="body" class="active">Body</button><button data-part="lens">Lens</button><button data-part="magazine">Magazine</button><button data-part="lcd">LCD</button><button data-part="finder">Finder</button></div><p id="part-copy">Carbon-fiber center body, machined frame, recessed hardware, and the horizontal film gate.</p></div>
+<div id="operator-ui"><div class="op-head"><span>Live optical tap · 24.000</span><span class="rec-dot"></span></div><div class="controls"><div class="control"><label><span>Focus distance</span><output id="focus-out">Ship</output></label><input id="focus" type="range" min="0" max="100" value="72"></div><div class="control"><label><span>Camera tilt</span><output id="tilt-out">Level</output></label><input id="tilt" type="range" min="-100" max="100" value="0"></div><div class="buttons"><button id="imax" class="active">IMAX 1.43</button><button id="standard">Standard 2.39</button></div></div><button class="roll" id="roll">Roll camera</button><p class="drag-note">Drag horizontally to pan · use the tilt slider</p></div>
+<script>
+(()=>{
+ const sections=[...document.querySelectorAll('.section')];
+ const anatomy=document.querySelector('#anatomy-ui');
+ const operator=document.querySelector('#operator-ui');
+ const progress=document.querySelector('#progress i');
+ const sync=()=>{
+  const marker=innerHeight*.46;let best=0,distance=Infinity;
+  sections.forEach((section,index)=>{const rect=section.getBoundingClientRect();const delta=Math.abs((rect.top+rect.bottom)/2-marker);if(delta<distance){distance=delta;best=index}});
+  sections.forEach((section,index)=>section.classList.toggle('active',index===best));
+  anatomy.classList.toggle('show',best===2);operator.classList.toggle('show',best===6);document.body.dataset.section=String(best);
+  const max=document.documentElement.scrollHeight-innerHeight;progress.style.height=(max?scrollY/max*100:0)+'%';
+ };
+ addEventListener('scroll',sync,{passive:true});addEventListener('resize',sync,{passive:true});sync();
+ const descriptions={body:'Carbon-fiber center body, machined frame, recessed hardware, and the horizontal film gate.',lens:'Large-format barrel with geared focus and iris rings, transmitted front glass, and a compact matte box.',magazine:'Side film magazine carrying the 65mm load and feeding the horizontal 15-perforation transport.',lcd:'Local telemetry for frame rate, remaining film, voltage, current, temperature, and transport state.',finder:'Reflex finder and video-tap assembly mounted above the main chassis.'};
+ document.querySelectorAll('.part-tabs button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.part-tabs button').forEach(item=>item.classList.toggle('active',item===button));document.querySelector('#part-copy').textContent=descriptions[button.dataset.part]}));
+})();
+</script>
+<script type="module">
+import('./app.js').catch(error=>{console.error(error);document.querySelector('#status').textContent='2D camera fallback · module unavailable'});
+</script>
+</body>
+</html>
