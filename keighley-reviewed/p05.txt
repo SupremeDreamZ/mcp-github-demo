@@ -1,0 +1,61 @@
+vironment.js';
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=t=>t*t*(3-2*t);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile=matchMedia('(max-width: 760px)').matches;const lowPower=mobile||((navigator.deviceMemory||8)<=4);const shot=(x,y,z)=>{const m=mobile?1.42:1;return new THREE.Vector3(x*m,y*(mobile?1.08:1),z*m)};
+const ease=v=>reduced?1:v;
+const stage=$('#stage'), statusEl=$('#webgpu-status'), compat=$('#compat');
+let renderer, viewRenderer, pipeline, viewPipeline, scene, camera, viewCamera, clock, rig, odyssey, blimp, periscope, filmAssembly, activeSection=0, rolling=false, remaining=42, hidden=false;
+let postFocus, viewFocus;
+const parts={}, explodedTargets={}, assembled={};
+const pointer=new THREE.Vector2(), raycaster=new THREE.Raycaster();
+let hovered=null, drag=false, dragStart={x:0,y:0}, pan=0, tilt=0;
+
+function checkSupport(){const c=document.createElement('canvas');const gl=c.getContext('webgl2');if(!navigator.gpu&&!gl){compat.style.display='grid';throw new Error('No WebGPU or WebGL2');}}
+checkSupport();
+
+function makeDataTexture(kind='carbon',size=256){
+ const data=new Uint8Array(size*size*4);
+ for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+  const i=(y*size+x)*4; let r=0,g=0,b=0,a=255;
+  if(kind==='carbon'){
+   const u=x/size*48,v=y/size*48;
+   const a1=Math.pow(.5+.5*Math.sin((u+v)*Math.PI),8), a2=Math.pow(.5+.5*Math.sin((u-v)*Math.PI),8);
+   const weave=(Math.floor(u)+Math.floor(v))%2===0?a1:a2; const noise=(Math.sin(x*12.9898+y*78.233)*43758.5453)%1;
+   const val=12+Math.floor(30*weave+7*Math.abs(noise)); r=val;g=val+2;b=val+4;
+  } else if(kind==='carbonRough'){
+   const u=x/size*48,v=y/size*48; const weave=.5+.5*Math.sin((u+v)*Math.PI)*Math.sin((u-v)*Math.PI); r=g=b=Math.floor(80+55*weave);
+  } else if(kind==='carbonNormal'){
+   const u=x/size*48,v=y/size*48; const nx=Math.sin((u+v)*Math.PI)*.34+Math.sin((u-v)*Math.PI)*.34; const ny=Math.cos((u+v)*Math.PI)*.34-Math.cos((u-v)*Math.PI)*.34; r=Math.floor(128+nx*90);g=Math.floor(128+ny*90);b=245;
+  } else if(kind==='brushed'){
+   const n=(Math.sin(y*91.7+x*.23)+Math.sin(y*19.1))*0.5;
+   const scratch=Math.abs(Math.sin(x*.037+y*2.31))>.997?48:0;
+   r=g=b=Math.floor(100+n*18+scratch);
+  } else if(kind==='glassRough'){
+   const dx=x-size*.56,dy=y-size*.48,rr=Math.hypot(dx,dy),ang=Math.atan2(dy,dx);
+   const ridge=Math.max(0,Math.sin(rr*.43+ang*2.2)-.9)*90;
+   const dust=Math.abs(Math.sin(x*17.17+y*41.31)*43758.5453)%1>.986?72:0;
+   r=g=b=Math.min(255,18+ridge+dust);
+  }
+  data[i]=r;data[i+1]=g;data[i+2]=b;data[i+3]=a;
+ }
+ const tex=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);tex.needsUpdate=true;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.colorSpace=kind==='carbon'?THREE.SRGBColorSpace:THREE.NoColorSpace;tex.anisotropy=8;return tex;
+}
+const carbonMap=makeDataTexture('carbon'), carbonRough=makeDataTexture('carbonRough'), carbonNormal=makeDataTexture('carbonNormal'), brushedMap=makeDataTexture('brushed'), glassRough=makeDataTexture('glassRough');
+carbonMap.repeat.set(2.2,1.5);carbonRough.repeat.copy(carbonMap.repeat);carbonNormal.repeat.copy(carbonMap.repeat);brushedMap.repeat.set(1,6);glassRough.repeat.set(1.3,1.3);
+const MAT={
+ carbon:new THREE.MeshPhysicalMaterial({map:carbonMap,roughnessMap:carbonRough,normalMap:carbonNormal,normalScale:new THREE.Vector2(.28,.28),color:0xffffff,roughness:.38,metalness:.05,clearcoat:.16,clearcoatRoughness:.55}),
+ metal:new THREE.MeshPhysicalMaterial({color:0x777b7d,metalness:1,roughness:.22,roughnessMap:brushedMap,anisotropy:.65,anisotropyRotation:Math.PI/2}),
+ blackMetal:new THREE.MeshPhysicalMaterial({color:0x111315,metalness:.92,roughness:.27,clearcoat:.18,clearcoatRoughness:.28}),
+ darkMetal:new THREE.MeshStandardMaterial({color:0x24282a,metalness:.82,roughness:.4}),
+ rubber:new THREE.MeshStandardMaterial({color:0x111111,metalness:.02,roughness:.86}),
+ glass:new THREE.MeshPhysicalMaterial({color:0xacc8ff,metalness:0,roughness:.025,roughnessMap:glassRough,transmission:1,thickness:.32,ior:1.52,dispersion:.035,clearcoat:1,clearcoatRoughness:.03,transparent:true,opacity:.92,attenuationColor:new THREE.Color(0x243a70),attenuationDistance:1.7}),
+ red:new THREE.MeshPhysicalMaterial({color:0x8d0905,emissive:0xff1208,emissiveIntensity:0,roughness:.28,clearcoat:.8}),
+ film:new THREE.MeshPhysicalMaterial({color:0x562b1b,roughness:.23,metalness:.04,transparent:true,opacity:.82,sheen:1,sheenColor:new THREE.Color(0xffb476),iridescence:.3,side:THREE.DoubleSide}),
+ amber:new THREE.MeshBasicMaterial({color:0xe8a33d,transparent:true,opacity:.82}),
+ black:new THREE.MeshStandardMaterial({color:0x050505,roughness:.7,metalness:.1})
+};
+function rounded(w,h,d,r=
