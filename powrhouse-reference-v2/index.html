@@ -1,1 +1,46 @@
-PLACEHOLDER
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<title>PowrHouse — Loading Dimension</title>
+<style>
+html,body{height:100%;margin:0;background:#020302;color:#f3f1e8;font-family:Arial,Helvetica,sans-serif}body{display:grid;place-items:center;overflow:hidden}.loader{width:min(86vw,560px);text-align:center;position:relative}.brand{font:900 clamp(3rem,13vw,6rem)/.78 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-style:italic;color:#080808;-webkit-text-stroke:2px #ff253a;text-shadow:3px 3px 0 #310009}.eyebrow{font-size:.7rem;letter-spacing:.18em;color:#a8ff00;font-weight:900;margin:24px 0 12px}.track{height:8px;background:#151a12;border:1px solid #455a31;overflow:hidden}.bar{height:100%;width:0;background:#a8ff00;box-shadow:0 0 24px #a8ff00;transition:width .15s ease}.status{font-size:.72rem;letter-spacing:.12em;color:#b6beb0;margin-top:12px}.error{white-space:pre-wrap;color:#ff6574;line-height:1.5;font-size:.78rem;margin-top:22px}.portal{position:fixed;inset:50% auto auto 50%;width:min(75vw,560px);aspect-ratio:1;border:18px solid rgba(168,255,0,.16);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 120px rgba(168,255,0,.13);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:translate(-50%,-50%) rotate(1turn)}}@media(prefers-reduced-motion:reduce){.portal{animation:none}}
+</style>
+</head>
+<body>
+<div class="portal" aria-hidden="true"></div>
+<main class="loader">
+  <div class="brand">PowrHouse.</div>
+  <p class="eyebrow">OPENING INTERDIMENSIONAL STOREFRONT</p>
+  <div class="track"><div class="bar" id="bar"></div></div>
+  <p class="status" id="status">ASSEMBLING REFERENCE-LOCKED EXPERIENCE · 0%</p>
+  <pre class="error" id="error" hidden></pre>
+</main>
+<script>
+(async()=>{
+ const files=Array.from({length:12},(_,i)=>`payload/${String(i+1).padStart(2,'0')}.b64`);
+ const compressedHash='a91e33e33252aaa9655bca42be6ff620ea7529f16efb97be9c56b40620ced4f6';
+ const htmlHash='33f11894b87e961b9292a8ac878f3c7bb04310f7e6570a740a8fe6c7513c2c2f';
+ const bar=document.getElementById('bar'),status=document.getElementById('status'),errorBox=document.getElementById('error');
+ const hex=b=>[...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
+ try{
+  if(typeof DecompressionStream==='undefined')throw new Error('This browser needs a current Safari, Chrome, Edge, or Firefox release.');
+  let encoded='';
+  for(let i=0;i<files.length;i++){
+    const r=await fetch(files[i],{cache:'force-cache'});if(!r.ok)throw new Error(`Payload ${i+1} failed: HTTP ${r.status}`);
+    encoded+=(await r.text()).trim();const pct=Math.round((i+1)/files.length*72);bar.style.width=pct+'%';status.textContent=`ASSEMBLING REFERENCE-LOCKED EXPERIENCE · ${pct}%`;
+  }
+  const raw=atob(encoded),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+  if(crypto?.subtle){const actual=hex(await crypto.subtle.digest('SHA-256',bytes));if(actual!==compressedHash)throw new Error('Compressed site integrity check failed. Reload after GitHub finishes publishing all files.');}
+  bar.style.width='84%';status.textContent='DECOMPRESSING ILLUSTRATED DIMENSION · 84%';
+  const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  if(crypto?.subtle){const actual=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(html)));if(actual!==htmlHash)throw new Error('Decoded site integrity check failed.');}
+  bar.style.width='100%';status.textContent='DIMENSION VERIFIED · 100%';
+  document.open();document.write(html);document.close();
+ }catch(err){status.textContent='TRANSMISSION FAILURE';errorBox.hidden=false;errorBox.textContent=err.message+'\n\nReload once after the latest GitHub deployment finishes.';}
+})();
+</script>
+</body>
+</html>
