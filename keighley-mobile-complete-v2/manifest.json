@@ -1,0 +1,51 @@
+{
+  "build": "keighley-mobile-complete-v2",
+  "architecture": "self-contained Canvas 2D/2.5D; no external runtime",
+  "files": {
+    "README.md": {
+      "bytes": 1125,
+      "sha256": "4338b267113ae6e5190f80d46c4e471652d4a42231e2fbdcb1e3006d045af837"
+    },
+    "camera.js": {
+      "bytes": 10515,
+      "sha256": "9f1a04f7cf9010159f12ed425d990c08190d4c5e8e5359065f064bf51e570783"
+    },
+    "camera.svg": {
+      "bytes": 2790,
+      "sha256": "7d7e7cf93ad4de944a9b76c80978e20fdffcd0ba2b903dd28bd0d5f8596e5a1e"
+    },
+    "controls.js": {
+      "bytes": 3259,
+      "sha256": "8950a24ab35ad17b7748013e338a5814510e25c9521fa50c5d64b5e2f69fba64"
+    },
+    "core.js": {
+      "bytes": 4454,
+      "sha256": "c7e81bb87db4c5eb8a47af8695f38c67d653f2ffc5223642c299093283327891"
+    },
+    "index.html": {
+      "bytes": 5952,
+      "sha256": "e8bc2f57b9a6fd27869f0adb3e1e0c8beb0af0bd47eccdd15f9f6b6aa07c5a89"
+    },
+    "scene.js": {
+      "bytes": 7661,
+      "sha256": "b45a9bc7eced71e7735d706a6ade82c541c4130cce81d7e3db48858c42e84d77"
+    },
+    "styles.css": {
+      "bytes": 9638,
+      "sha256": "9097044f2e116254fb5e60fdded7100d853858671c6ab6f3dafa1b537b829102"
+    }
+  },
+  "qa_viewports": [
+    "320x568 portrait",
+    "390x844 portrait",
+    "430x932 portrait",
+    "844x390 landscape"
+  ],
+  "qa_notes": [
+    "all JavaScript passed node --check",
+    "all local asset references resolved",
+    "no duplicate HTML ids",
+    "no external URLs or decoder loaders",
+    "controls exercised in prior automated browser QA; final changes only lower anatomy framing and hide cramped landscape status"
+  ]
+}
