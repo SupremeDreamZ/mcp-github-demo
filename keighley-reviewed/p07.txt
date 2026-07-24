@@ -1,0 +1,29 @@
+plate
+ const brand=labelPlane('IMAX  KEIGHLEY',1.65,.22,{size:74,weight:700});brand.position.set(-.45,.76,1.135);body.add(brand);
+ // handle
+ const handleBar=cyl(.105,.105,1.6,MAT.metal,32);handleBar.rotation.z=0;handleBar.position.set(.2,.42,1.31);body.add(handleBar);for(const x of [-.72,.72]){const st=rounded(.14,.42,.12,.03,MAT.metal,4);st.position.set(x,.42,1.22);body.add(st)}
+ // lcd frame and controls
+ const lcdGroup=new THREE.Group();lcdGroup.name='telemetry LCD';parts.lcd=lcdGroup;body.add(lcdGroup);lcdGroup.position.set(.2,-.55,1.17);
+ const lcdBezel=rounded(2.55,1.18,.14,.08,MAT.blackMetal,6);lcdGroup.add(lcdBezel);const lcdScreen=createLCD();parts.lcdScreen=lcdScreen;lcdScreen.position.set(-.18,.01,.081);lcdGroup.add(lcdScreen);
+ for(const x of [-1.06,1.08])for(const y of [-.38,.38]){const b=disc(.11,.06,MAT.darkMetal);b.rotation.z=0;b.rotation.x=Math.PI/2;b.position.set(x,y,.1);lcdGroup.add(b)}
+ const dial=disc(.29,.08,MAT.blackMetal);dial.rotation.z=0;dial.rotation.x=Math.PI/2;dial.position.set(1.03,.03,.1);lcdGroup.add(dial);for(let i=0;i<16;i++){const tick=new THREE.Mesh(new THREE.BoxGeometry(.02,.07,.02),MAT.metal);const a=i/16*Math.PI*2;tick.position.set(1.03+Math.sin(a)*.23,.03+Math.cos(a)*.23,.15);tick.rotation.z=-a; lcdGroup.add(tick)}
+ // lens assembly
+ const lens=new THREE.Group();lens.name='lens assembly';parts.lens=lens;root.add(lens);lens.position.x=-2.15;
+ const mount=disc(1.02,.34,MAT.metal);lens.add(mount);const mountBlack=disc(.86,.22,MAT.blackMetal);mountBlack.position.x=-.27;lens.add(mountBlack);
+ const barrel=disc(.78,2.15,MAT.blackMetal);barrel.position.x=-1.28;lens.add(barrel);
+ const focus=gearRing(.86,.34,52,MAT.rubber);focus.position.x=-.88;lens.add(focus);const iris=gearRing(.82,.28,48,MAT.rubber);iris.position.x=-1.55;lens.add(iris);
+ const taper=cyl(.92,.72,.62,MAT.blackMetal);taper.position.x=-2.45;lens.add(taper);const frontRing=disc(.94,.18,MAT.metal);frontRing.position.x=-2.79;lens.add(frontRing);const glass=disc(.76,.10,MAT.glass);glass.position.x=-2.91;lens.add(glass);
+ for(let i=0;i<9;i++){const mark=labelPlane(String(2+i*2),.16,.08,{size:92,mono:true,color:'#e3ddd1'});mark.position.set(-.76-i*.12,.83,.04);mark.rotation.y=Math.PI/2;lens.add(mark)}
+ // matte box
+ const matte=new THREE.Group();matte.position.x=-3.27;lens.add(matte);const box=rounded(.45,2.2,2.45,.06,MAT.blackMetal,5);matte.add(box);const aperture=new THREE.Mesh(new THREE.BoxGeometry(.48,1.42,1.58),MAT.black);aperture.position.x=-.04;matte.add(aperture);
+ const topFlag=rounded(1.25,.08,2.7,.02,MAT.blackMetal,3);topFlag.position.set(.32,1.35,0);topFlag.rotation.z=-.28;matte.add(topFlag);const sideFlag=rounded(.9,2.3,.07,.02,MAT.blackMetal,3);sideFlag.position.set(.25,0,1.48);sideFlag.rotation.y=.28;matte.add(sideFlag);
+ // magazine
+ const mag=new THREE.Group();mag.name='film magazine';parts.magazine=mag;root.add(mag);mag.position.set(3.36,.22,0);
+ const magBody=rounded(3.05,2.12,2.05,.17,MAT.carbon,8);mag.add(magBody);const magCap=rounded(2.8,1.82,.055,.1,MAT.carbon,5);magCap.position.z=1.05;mag.add(magCap);for(const x of [-1.25,1.25])for(const y of [-.75,.75])addScrew(mag,x,y,1.09,0,.9);
+ const imax=labelPlane('IMAX',1.02,.3,{size:116});imax.position.set(.77,.33,1.085);mag.add(imax);const lowerLine=rounded(2.55,.045,.06,.018,MAT.darkMetal,3);lowerLine.position.set(.2,-.63,1.08);lowerLine.rotation.z=-.13;mag.add(lowerLine);
+ // internal reels visible from ghosted top inserts
+ const reelMat=new THREE.MeshPhysicalMaterial({color:0x262a2c,metalness:.92,roughness:.32});for(const x of [-.74,.78]){const reel=disc(.63,.12,reelMat);reel.rotation.y=Math.PI/2;reel.rotation.z=0;reel.position.set(x,0,0);mag.add(reel);for(let i=0;i<6;i++){const spoke=rounded(.06,1.05,.06,.02,MAT.metal,3);spoke.position.set(x,0,.08);spoke.rotation.z=i*Math.PI/3;mag.add(spoke)}}
+ // viewfinder + tap
+ const vf=new THREE.Group();vf.name='reflex viewfinder and video tap';parts.viewfinder=vf;root.add(vf);vf.position.set(.3,1.82,.02);
+ const vfBody=disc(.55,2.25,MAT.blackMetal);vfBody.position.x=.35;vf.add(vfBody);const eye=disc(.64,.22,MAT.rubber);eye.position.x=1.56;vf.add(eye);const prism=rounded(.9,.92,.88,.09,MAT.carbon,6);prism.position.x=-.9;vf.add(prism);
+ const tap=rounded(.68,.78,.72,.08,MAT.blackMetal,5);tap.position.set(-.85,.72,0);vf.add(tap);const monitorStand=makeCable([new THREE.Vector3(-.85,1.05,0),new THREE.Vector3(-.65,1.55,.15),new THREE.Vector3(-.2,1.78,.12)],.045,0x252729);vf.add(monitorStand);const monitor=rounded(1.38,.88,.14,.07,MAT.blackMetal,5);monitor.position.set(.3,1.8,.12);monitor.rotation.z=-.06;vf.add(monitor);const monScreen=new THREE.Mesh(new THREE.PlaneGeometry(1.14,.65),new THREE.MeshBasicMaterial({color:0x315f9b,toneMapped:false}));monScreen.position.set(.3,1.8,.195);monScreen.rotation.z=-.06;vf.add(m
