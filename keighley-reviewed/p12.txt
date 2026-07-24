@@ -1,0 +1,13 @@
+/.45)));postFocus.value=6.6;}
+ if(activeSection===5){setExplode(0);rig.scale.setScalar(.48);rig.position.set(0,-.35,-1.4);rig.rotation.set(.04,-.35,0);camera.position.lerp(shot(8.5,4.8,15),ease(.04));camera.lookAt(0,.1,-1);postFocus.value=8.8;}
+ if(activeSection===6){setExplode(0);rig.scale.setScalar(.55);rig.position.set(-5.5,-.45,2.4);rig.rotation.set(.02,-1.22,0);camera.position.lerp(shot(8.5,3.2,13.8),ease(.06));camera.lookAt(0,-.2,-7);const focusVal=+$('#focus').value/100;postFocus.value=lerp(3.2,17,focusVal);viewFocus.value=lerp(3.1,18.5,focusVal);viewCamera.position.set(-2.1,.4,2.8);const target=new THREE.Vector3(4+pan*13,-.7-tilt*9,-16);viewCamera.lookAt(target);odyssey.rotation.y=Math.sin(mt*.12)*.012;}
+ if(activeSection===7){rig.visible=false;odyssey.visible=true;camera.position.lerp(shot(0,2.5,15),ease(.03));camera.lookAt(4,-.7,-16);postFocus.value=18;}
+ // subtle life
+ if(parts.lens){parts.lens.children.forEach((o,i)=>{if(o.type==='Group'&&i%2===0)o.rotation.x+=rolling&&!reduced?dt*3.1:0})}
+ if(rolling){remaining-=dt;if(remaining<=0){remaining=42}if(Math.floor(remaining*5)%5===0)updateLCD()}else remaining=Math.min(42,remaining+dt*.15);
+ renderer.render(scene,camera);if(activeSection===6&&viewRenderer){viewRenderer.render(scene,viewCamera)}
+}
+init().catch(err=>{console.error(err);statusEl.textContent='Renderer error';compat.style.display='grid';compat.querySelector('p').textContent='The GPU scene failed to initialize. Open the console for the exact error. No fallback render has been substituted.'});
+</script>
+</body>
+</html>
