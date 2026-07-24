@@ -1,0 +1,34 @@
+0px)/.88 "Arial Narrow",Impact,sans-serif;text-transform:uppercase;margin-bottom:22px}#compat p{max-width:620px;color:#bbb7ae;font-size:17px;line-height:1.5}
+@media(max-width:760px){#scroll-film{right:7px;width:12px}.section{padding:12vh 24px;align-items:flex-end;min-height:124vh}.section.right{justify-content:flex-start}.hero h1{white-space:normal}.hero .copy{margin-bottom:9vh}.section .copy{background:linear-gradient(90deg,rgba(7,7,7,.86),rgba(7,7,7,.1));padding:18px 12px 18px 0}.stats{grid-template-columns:1fr}.part-label{width:43vw;font-size:9px;padding:7px}.part-label b{font-size:9px}.part-label[data-id="body"]{left:3vw;top:26vh}.part-label[data-id="lens"]{left:3vw;top:54vh}.part-label[data-id="magazine"]{right:5vw;top:22vh}.part-label[data-id="lcd"]{right:5vw;top:48vh}.part-label[data-id="viewfinder"]{right:5vw;top:67vh}#section-count{display:none}#finale-ui{right:4vw;bottom:3vh;width:92vw}.controls{grid-template-columns:1fr}.end-card{padding-bottom:48vh}}
+@media(prefers-reduced-motion:reduce){#grain{animation:none}.section .copy{transition:none}.rolling .rec-dot{animation:none}}
+
+/* V2 visibility, responsive spacing, and collision fixes */
+.section .copy{opacity:0!important;visibility:hidden;pointer-events:none!important;transform:translateY(18px)}
+.section.active .copy{opacity:1!important;visibility:visible;pointer-events:auto!important;transform:none}
+.section[data-index="2"]{align-items:flex-start;justify-content:center;padding-top:7vh}
+.section[data-index="2"] .copy{max-width:46vw;text-align:center}
+.section[data-index="6"]{justify-content:flex-start}
+.section[data-index="6"] .copy{max-width:42vw}
+@media(max-width:760px){
+ body{overflow-x:hidden}.section{min-height:112svh;padding:9svh 20px 30svh;align-items:flex-start}.section.right,.section.center{justify-content:flex-start;text-align:left}.section .copy{width:calc(100vw - 40px);max-width:none;background:linear-gradient(90deg,rgba(7,7,7,.88),rgba(7,7,7,.18));padding:14px 10px 14px 0}.hero{align-items:flex-end}.hero .copy{margin-bottom:9svh}.hero h1{font-size:clamp(64px,23vw,112px)}h2{font-size:clamp(44px,16vw,76px)}.body-copy{font-size:18px}.stats{grid-template-columns:1fr}
+ #exploded-labels{inset:auto 12px calc(14px + env(safe-area-inset-bottom)) 12px;height:auto;display:flex;gap:8px;overflow-x:auto;align-items:stretch;padding:0 0 4px;scroll-snap-type:x proximity}.part-label,.part-label[data-id]{position:relative;inset:auto!important;flex:0 0 72vw;width:72vw;min-height:92px;scroll-snap-align:start;background:rgba(5,5,5,.92);font-size:10px}.part-label b{font-size:10px}#leader-svg{display:none!important}
+ #finale-ui{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;max-height:48svh;overflow:auto}.section[data-index="6"]{padding-bottom:57svh}.section[data-index="6"] .copy{max-width:none}.controls{grid-template-columns:1fr}.end-card{padding-bottom:24svh}#scroll-film{right:5px}
+}
+</style>
+</head>
+<body>
+<div id="stage"><div id="vignette"></div><div id="grain"></div></div>
+<div id="webgpu-status">Initializing renderer</div>
+<div id="scroll-film"><div id="film-progress"></div></div><div id="section-count">01 / 08</div>
+<svg id="leader-svg" aria-hidden="true"><path id="line-body"/><circle id="dot-body" r="2"/><path id="line-lens"/><circle id="dot-lens" r="2"/><path id="line-magazine"/><circle id="dot-magazine" r="2"/><path id="line-lcd"/><circle id="dot-lcd" r="2"/><path id="line-viewfinder"/><circle id="dot-viewfinder" r="2"/></svg>
+<div id="exploded-labels">
+ <div class="part-label" data-id="body"><b>Carbon-fiber body</b>Compact woven shell, machined frame, recessed hardware and the horizontal 15-perf gate.</div>
+ <div class="part-label" data-id="lens"><b>Large-format lens</b>PL-style mount, geared focus and iris rings, transmitted front glass and matte-box flags.</div>
+ <div class="part-label" data-id="magazine"><b>Film magazine</b>1,000-foot 65mm load. Roughly 2.5–3 minutes at 24 fps.</div>
+ <div class="part-label" data-id="lcd"><b>Telemetry LCD</b>Frame rate, remaining film, temperature, voltage, current and local transport status.</div>
+ <div class="part-label" data-id="viewfinder"><b>Reflex finder + video tap</b>Optical finder above the body with a modern tap feeding the external monitor.</div>
+</div>
+<div id="compat"><div><strong>GPU rendering unavailable</strong><p>This experience needs WebGPU or WebGL 2. Update the browser and enable hardware acceleration. Use a current browser with hardware acceleration enabled.</p></div></div>
+<main>
+<section class="section hero center" data-index="0"><div class="copy"><p class="kicker">IMAX 15/70 · Camera study</p><h1>THE KEIGHLEY.</h1><p class="subhead">The camera behind the first film shot entirely on IMAX.</p></div></section>
+<section class="section right" data-index="1"><div c
