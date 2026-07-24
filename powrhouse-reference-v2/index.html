@@ -20,7 +20,7 @@ html,body{height:100%;margin:0;background:#020302;color:#f3f1e8;font-family:Aria
 </main>
 <script>
 (async()=>{
- const files=Array.from({length:12},(_,i)=>`payload/${String(i+1).padStart(2,'0')}.b64`);
+ const files=Array.from({length:4},(_,i)=>`payload/${String(i+1).padStart(2,'0')}.b64`);
  const compressedHash='a91e33e33252aaa9655bca42be6ff620ea7529f16efb97be9c56b40620ced4f6';
  const htmlHash='33f11894b87e961b9292a8ac878f3c7bb04310f7e6570a740a8fe6c7513c2c2f';
  const bar=document.getElementById('bar'),status=document.getElementById('status'),errorBox=document.getElementById('error');
