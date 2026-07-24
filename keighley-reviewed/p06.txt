@@ -1,0 +1,27 @@
+.08,mat=MAT.carbon,seg=6){const g=new RoundedBoxGeometry(w,h,d,seg,r);const m=new THREE.Mesh(g,mat);m.castShadow=m.receiveShadow=true;return m}
+function cyl(r1,r2,len,mat=MAT.blackMetal,rad=64){const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,len,rad,1,false),mat);m.rotation.z=Math.PI/2;m.castShadow=m.receiveShadow=true;return m}
+function disc(r,depth,mat=MAT.metal){const m=cyl(r,r,depth,mat,64);return m}
+function addScrew(parent,x,y,z,rotY=0,scale=1){const g=new THREE.CylinderGeometry(.075*scale,.075*scale,.035*scale,24);const m=new THREE.Mesh(g,MAT.darkMetal);m.rotation.x=Math.PI/2;m.rotation.y=rotY;m.position.set(x,y,z);m.castShadow=true;parent.add(m);const slot=new THREE.Mesh(new THREE.BoxGeometry(.08*scale,.014*scale,.012*scale),MAT.black);slot.position.set(x,y,z+.023*scale);slot.rotation.z=Math.PI/3;parent.add(slot)}
+function canvasTexture(draw,w=1024,h=256){const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');draw(ctx,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return {texture:t,canvas:c,ctx};}
+function labelPlane(text,w=.9,h=.18,opts={}){const pack=canvasTexture((ctx,W,H)=>{ctx.clearRect(0,0,W,H);ctx.fillStyle=opts.bg||'rgba(0,0,0,0)';ctx.fillRect(0,0,W,H);ctx.fillStyle=opts.color||'#f4f1ea';ctx.font=`${opts.weight||700} ${opts.size||88}px ${opts.mono?'monospace':'Arial'}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.letterSpacing='8px';ctx.fillText(text,W/2,H/2);},1024,220);const mat=new THREE.MeshBasicMaterial({map:pack.texture,transparent:true,depthWrite:false,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);mesh.userData.texture=pack.texture;return mesh}
+function createLCD(){
+ const pack=canvasTexture((ctx,W,H)=>{},1024,576);const {ctx,canvas,texture}=pack;
+ const mat=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,toneMapped:false});
+ const screen=new THREE.Mesh(new THREE.PlaneGeometry(1.64,.9),mat);screen.userData={ctx,canvas,texture};return screen;
+}
+function updateLCD(){if(!parts.lcdScreen)return;const {ctx,canvas,texture}=parts.lcdScreen.userData;const W=canvas.width,H=canvas.height;ctx.fillStyle='#020806';ctx.fillRect(0,0,W,H);const grd=ctx.createLinearGradient(0,0,W,H);grd.addColorStop(0,'rgba(35,255,126,.12)');grd.addColorStop(1,'rgba(0,80,40,.04)');ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(86,255,149,.2)';ctx.lineWidth=2;for(let y=0;y<H;y+=9){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+ const fps=rolling&&Math.floor(performance.now()/1400)%2?'23.999':'24.000';ctx.fillStyle='#91ffb9';ctx.font='700 44px monospace';ctx.fillText('CAM   FPS      TEMP',38,62);ctx.font='700 84px monospace';ctx.fillText(`A     ${fps}   26°C`,38,148);ctx.strokeStyle='#42e886';ctx.strokeRect(32,180,W-64,156);ctx.fillStyle='#b1ffcb';ctx.font='700 92px monospace';ctx.fillText(`Rem: 00:${String(Math.max(0,Math.floor(remaining))).padStart(2,'0')}`,57,286);ctx.fillStyle='#76eea0';ctx.font='700 44px monospace';ctx.fillText('35.5V / 3.2A',40,396);ctx.fillText(rolling?'LOCAL 230.7 FORWARD  • REC':'LOCAL 230.7 FORWARD',40,474);ctx.fillStyle='#244b31';ctx.fillRect(34,510,W-68,18);ctx.fillStyle='#6cff9f';ctx.fillRect(34,510,(W-68)*clamp(remaining/42),18);texture.needsUpdate=true;
+}
+function gearRing(radius,width,teeth=46,mat=MAT.rubber){const g=new THREE.Group();const ring=cyl(radius,radius,width,mat,80);g.add(ring);const toothGeo=new THREE.BoxGeometry(width*.7,.065,.13);for(let i=0;i<teeth;i++){const a=i/teeth*Math.PI*2;const t=new THREE.Mesh(toothGeo,mat);t.position.set(0,Math.cos(a)*radius,Math.sin(a)*radius);t.rotation.x=a;t.castShadow=true;g.add(t)}return g}
+function makeCable(points,r=.025,color=0x111111){const curve=new THREE.CatmullRomCurve3(points);const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,48,r,9,false),new THREE.MeshStandardMaterial({color,roughness:.74}));mesh.castShadow=true;return mesh}
+function createCameraRig(){
+ const root=new THREE.Group();root.name='Keighley camera';
+ // body
+ const body=new THREE.Group();body.name='carbon-fiber body';parts.body=body;root.add(body);
+ const chassis=rounded(4.2,2.62,2.18,.16,MAT.carbon,8);body.add(chassis);
+ const frameTop=rounded(4.34,.13,2.3,.035,MAT.metal,4);frameTop.position.y=1.26;body.add(frameTop);const frameBottom=frameTop.clone();frameBottom.position.y=-1.26;body.add(frameBottom);
+ const frontRail=rounded(.13,2.48,2.28,.03,MAT.metal,4);frontRail.position.x=-2.07;body.add(frontRail);const rearRail=frontRail.clone();rearRail.position.x=2.07;body.add(rearRail);
+ // panel seam and side plate
+ const sidePanel=rounded(3.72,1.92,.045,.08,MAT.carbon,5);sidePanel.position.z=1.105;body.add(sidePanel);
+ for(const x of [-1.73,1.73])for(const y of [-.82,.82])addScrew(body,x,y,1.14,0,.86);
+ // brand 
