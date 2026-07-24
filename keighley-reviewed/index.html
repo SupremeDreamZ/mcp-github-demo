@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>The Keighley — Reviewed Build</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#0a0a0a;color:#f4f1ea;font-family:Inter,system-ui,-apple-system,sans-serif}body{display:grid;place-items:center;overflow:hidden}.loader{text-align:center;font:700 10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}.spinner{width:50px;height:50px;margin:0 auto 17px;border:1px solid #333;border-top-color:#e8a33d;border-radius:50%;animation:spin .9s linear infinite}.detail{margin-top:9px;color:#777;letter-spacing:.09em;text-transform:none}pre{max-width:min(720px,90vw);white-space:pre-wrap;line-height:1.55;color:#f4f1ea}@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="loader"><div class="spinner"></div>Loading reviewed build<div class="detail" id="detail">Fetching source 0 / 12</div></div>
+<script type="module">
+const EXPECTED_CHARS=54362;
+const EXPECTED_SHA256='9f16f228ffc4ef57951b480eae0ff43c22588f8c2bf470b9d6dc2271ec688602';
+const detail=document.querySelector('#detail');
+const names=Array.from({length:12},(_,i)=>`p${String(i+1).padStart(2,'0')}.txt`);
+try{
+  const parts=[];
+  for(let i=0;i<names.length;i++){
+    detail.textContent=`Fetching source ${i+1} / ${names.length}`;
+    const response=await fetch(names[i],{cache:'no-store'});
+    if(!response.ok) throw new Error(`${names[i]} returned HTTP ${response.status}`);
+    parts.push(await response.text());
+  }
+  const html=parts.join('');
+  detail.textContent='Verifying source integrity';
+  if(html.length!==EXPECTED_CHARS) throw new Error(`Source length mismatch: ${html.length} instead of ${EXPECTED_CHARS}`);
+  if(!html.startsWith('<!doctype html>')||!html.trimEnd().endsWith('</html>')) throw new Error('Source boundary check failed');
+  if(globalThis.crypto?.subtle){
+    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(html));
+    const hash=[...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+    if(hash!==EXPECTED_SHA256) throw new Error(`Source hash mismatch: ${hash}`);
+  }
+  document.open();
+  document.write(html);
+  document.close();
+}catch(error){
+  console.error(error);
+  document.body.innerHTML=`<pre><strong>Preview verification failed.</strong>\n\n${String(error.message||error)}\n\nNo compressed data or decoding step is used in this build.</pre>`;
+}
+</script>
+</body>
+</html>
