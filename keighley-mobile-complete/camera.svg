@@ -1,4 +1,4 @@
-<svg id="camera-poster" viewBox="0 0 920 560" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" id="camera-poster" viewBox="0 0 920 560" aria-hidden="true">
  <defs>
   <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#454b50"/><stop offset=".45" stop-color="#202427"/><stop offset="1" stop-color="#0d0f11"/></linearGradient>
   <linearGradient id="metalG" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d3d7d8"/><stop offset=".45" stop-color="#707679"/><stop offset="1" stop-color="#25292b"/></linearGradient>
