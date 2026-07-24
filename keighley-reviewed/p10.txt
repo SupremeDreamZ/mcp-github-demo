@@ -1,0 +1,34 @@
+yssey=createOdyssey();scene.add(odyssey);updateLCD();
+ // Reliability-first render path. The camera draws directly; costly post passes can no longer erase it.
+ pipeline=null;postFocus={value:18};viewFocus={value:18};
+ viewCamera=new THREE.PerspectiveCamera(38,1.43,.1,180);viewRenderer=null;viewPipeline=null;
+ try{viewRenderer=new THREE.WebGPURenderer({canvas:$('#viewfinder'),antialias:false,alpha:false,powerPreference:'high-performance',forceWebGL:true});viewRenderer.setPixelRatio(Math.min(devicePixelRatio,.9));viewRenderer.toneMapping=THREE.ACESFilmicToneMapping;viewRenderer.toneMappingExposure=1.18;viewRenderer.outputColorSpace=THREE.SRGBColorSpace;await viewRenderer.init()}catch(e){console.warn('Viewfinder fallback',e);viewRenderer=null}
+ setupEvents();onResize();requestAnimationFrame(animate);
+}
+function setupEvents(){
+ addEventListener('resize',onResize);addEventListener('scroll',onScroll,{passive:true});document.addEventListener('visibilitychange',()=>hidden=document.hidden);
+ renderer.domElement.addEventListener('pointermove',e=>{if(activeSection!==2)return;pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight*2-1);raycaster.setFromCamera(pointer,camera);const objects=[parts.body,parts.lens,parts.magazine,parts.lcd,parts.viewfinder].flatMap(o=>{const arr=[];o.traverse(x=>{if(x.isMesh)arr.push(x)});return arr});const hit=raycaster.intersectObjects(objects,false)[0];let p=hit?.object;while(p&&![parts.body,parts.lens,parts.magazine,parts.lcd,parts.viewfinder].includes(p))p=p.parent;setHovered(p||null)});
+ renderer.domElement.addEventListener('pointerleave',()=>setHovered(null));
+ const wrap=$('#viewfinder-wrap');wrap.addEventListener('pointerdown',e=>{drag=true;dragStart={x:e.clientX,y:e.clientY};wrap.setPointerCapture(e.pointerId)});wrap.addEventListener('pointermove',e=>{if(!drag)return;pan=clamp(pan+(e.clientX-dragStart.x)*.0025,-.6,.6);tilt=clamp(tilt+(e.clientY-dragStart.y)*.002,-.28,.28);dragStart={x:e.clientX,y:e.clientY}});wrap.addEventListener('pointerup',()=>drag=false);wrap.addEventListener('pointercancel',()=>drag=false);
+ $('#focus').addEventListener('input',e=>{$('#focus-out').textContent=e.target.value<45?'Foreground':e.target.value>65?'Ship':'Midpoint'});
+ $('#imax-btn').addEventListener('click',()=>setFormat(true));$('#std-btn').addEventListener('click',()=>setFormat(false));$('#roll').addEventListener('click',toggleRoll);onScroll();
+}
+function setHovered(p){
+ if(hovered===p)return;
+ hovered=p;
+ const selectedId=Object.keys(parts).find(id=>parts[id]===p)||null;
+ for(const id of ['body','lens','magazine','lcd','viewfinder']){
+  const root=parts[id],base=assembled[id]?.s||new THREE.Vector3(1,1,1);
+  root.scale.copy(base).multiplyScalar(selectedId===id?1.055:1);
+ }
+ $$('.part-label').forEach(el=>{
+  el.style.opacity=selectedId&&el.dataset.id!==selectedId?'.32':'1';
+  el.style.borderTopColor=selectedId===el.dataset.id?'#ffe0a5':'var(--amber)';
+ });
+}
+function setFormat(imax){$('#imax-btn').classList.toggle('active',imax);$('#std-btn').classList.toggle('active',!imax);$('#imax-btn').setAttribute('aria-pressed',String(imax));$('#std-btn').setAttribute('aria-pressed',String(!imax));$('#viewfinder-wrap').classList.toggle('standard',!imax);$('#format-out').textContent=imax?'1.43:1':'2.39:1';viewCamera.fov=imax?39:26;viewCamera.updateProjectionMatrix();onResize()}
+function toggleRoll(){rolling=!rolling;$('#operator-panel').classList.toggle('rolling',rolling);$('#roll').textContent=rolling?'Cut camera':'Roll camera';MAT.red.emissiveIntensity=rolling?8:0;updateLCD();if(rolling)startFilmAudio();else stopFilmAudio();}
+let audioCtx,noiseNode,noiseGain,oscA,oscB;
+function startFilmAudio(){if(audioCtx){stopFilmAudio();return}audioCtx=new (window.AudioContext||window.webkitAudioContext)();const len=audioCtx.sampleRate*2,buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(.22+.1*Math.sin(i*.02));noiseNode=audioCtx.createBufferSource();noiseNode.buffer=buf;noiseNode.loop=true;const filter=audioCtx.createBiquadFilter();filter.type='bandpass';filter.frequency.value=1250;filter.Q.value=.7;noiseGain=audioCtx.createGain();noiseGain.gain.value=.11;oscA=audioCtx.createOscillator();oscB=audioCtx.createOscillator();oscA.type='sawtooth';oscB.type='square';oscA.frequency.value=72;oscB.frequency.value=144;const og=audioCtx.createGain();og.gain.value=.024;noiseNode.connect(filter).connect(noiseGain).connect(audioCtx.destination);oscA.connect(og);oscB.connect(og);og.connect(audioCtx.destination);noiseNode.start();oscA.start();oscB.start();}
+function stopFilmAudio(){const ctx=audioCtx;try{noiseGain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.12);setTimeout(()=>ctx?.close(),180)}catch{}audioCtx=null}
+function onResize(){
