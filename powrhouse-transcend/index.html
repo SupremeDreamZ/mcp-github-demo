@@ -1,246 +1,31 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#050607" />
-  <meta name="description" content="PowrHouse: Cultivate. Validate. Showcase. An interactive cultivation and R&D experience for adults 21+." />
-  <title>PowrHouse — Cultivate. Validate. Transcend.</title>
-  <link rel="stylesheet" href="./styles.css" />
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-      }
-    }
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050607">
+<title>PowrHouse — Loading Experience</title>
+<style>
+html,body{height:100%;margin:0;background:#050607;color:#e8f7db;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}body{display:grid;place-items:center;overflow:hidden}main{width:min(86vw,560px)}.brand{font:900 clamp(2rem,8vw,4.5rem)/.9 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-style:italic}.brand span{color:#a8ff00}p{margin:1.25rem 0 .75rem;color:#a7b1a2;letter-spacing:.08em;font-size:.78rem}.track{height:6px;background:#1c2419;overflow:hidden;border:1px solid #34402e}.bar{height:100%;width:0;background:#a8ff00;box-shadow:0 0 18px #a8ff00;transition:width .18s ease}.error{color:#ff5d5d;white-space:pre-wrap;line-height:1.5}a{color:#a8ff00}
+</style>
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <div id="ageGate" class="age-gate" role="dialog" aria-modal="true" aria-labelledby="ageTitle">
-    <div class="age-gate__panel">
-      <div class="brand-lockup brand-lockup--large" aria-label="PowrHouse">Powr<span>House.</span></div>
-      <p class="eyebrow">ADULT ACCESS PROTOCOL</p>
-      <h1 id="ageTitle">Are you 21 or older?</h1>
-      <p>This experience contains cannabis-related content intended only for adults of legal age.</p>
-      <div class="age-gate__actions">
-        <button id="ageEnter" class="button button--acid">ENTER THE HOUSE</button>
-        <a class="button button--ghost" href="https://www.google.com/">EXIT</a>
-      </div>
-      <p class="microcopy">By entering, you confirm that you are at least 21 years old.</p>
-    </div>
-  </div>
-
-  <div id="loading" class="loading" aria-live="polite">
-    <div class="loading__core" aria-hidden="true"><span></span><span></span><span></span></div>
-    <p>CALIBRATING CULTIVAR CORE <b id="loadingPercent">0%</b></p>
-  </div>
-
-  <header class="site-header" id="siteHeader">
-    <a class="brand-lockup" href="#hero" aria-label="PowrHouse home">Powr<span>House.</span></a>
-    <div class="site-header__meta">
-      <span class="status-dot" aria-hidden="true"></span>
-      <span>R&amp;D SIGNAL LIVE</span>
-    </div>
-    <div class="site-header__actions">
-      <button id="soundToggle" class="icon-button" type="button" aria-pressed="false" aria-label="Toggle sound">SOUND OFF</button>
-      <button id="menuToggle" class="menu-button" type="button" aria-expanded="false" aria-controls="siteNav"><span></span><span></span></button>
-    </div>
-  </header>
-
-  <nav id="siteNav" class="site-nav" aria-label="Primary">
-    <a href="#origin">01 / Origin</a>
-    <a href="#system">02 / System</a>
-    <a href="#validation">03 / Validation</a>
-    <a href="#garden">04 / Garden</a>
-    <a href="#flavor">05 / Flower</a>
-    <a href="#quiet">06 / Signal</a>
-    <a href="#game">07 / Defense</a>
-  </nav>
-
-  <div class="scroll-rail" aria-hidden="true">
-    <div class="scroll-rail__track"><div id="scrollPulse" class="scroll-rail__pulse"></div></div>
-    <span id="sectionReadout">00</span>
-  </div>
-
-  <canvas id="worldCanvas" class="world-canvas" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="scanlines" aria-hidden="true"></div>
-
-  <main id="main">
-    <section id="hero" class="chapter chapter--hero" data-chapter="00" data-scene="0">
-      <div class="chapter__copy chapter__copy--hero">
-        <p class="eyebrow">SACRAMENTO CULTIVATION + R&amp;D</p>
-        <h1 class="hero-title"><span>CULTIVATE.</span><span>VALIDATE.</span><em>TRANSCEND.</em></h1>
-        <p class="hero-subhead">Precision-grown, flavor-driven flower tested for how it performs, not merely how it photographs.</p>
-        <div class="hero-actions">
-          <a class="button button--acid" href="#system">ENTER THE SYSTEM <span>→</span></a>
-          <a class="button button--ghost" href="#game">SKIP TO DEFENSE</a>
-        </div>
-        <ul class="proof-strip" aria-label="PowrHouse process highlights">
-          <li><b>01</b> SYNGANIC METHOD</li>
-          <li><b>02</b> CONTROLLED TRIALS</li>
-          <li><b>03</b> SMOKEABILITY METRICS</li>
-        </ul>
-      </div>
-      <div class="hero-marker" aria-hidden="true">
-        <span>SCROLL TO FEED THE CORE</span>
-        <i></i>
-      </div>
-    </section>
-
-    <section id="origin" class="chapter chapter--split" data-chapter="01" data-scene="1">
-      <div class="chapter__copy">
-        <p class="eyebrow">THE HOUSE</p>
-        <h2>Built to make quality repeatable.</h2>
-        <p>PowrHouse is a commercial cultivation and R&amp;D platform focused on precision growing, controlled experimentation, and data-driven performance at scale.</p>
-        <p>The visual world around you is a fictional metaphor. The operating principles are real: cultivate deliberately, validate the result, and keep only what performs.</p>
-      </div>
-      <aside class="data-block" aria-label="PowrHouse facts">
-        <div><span>LOCATION</span><strong>SACRAMENTO, CA</strong></div>
-        <div><span>FOCUS</span><strong>COMMERCIAL R&amp;D</strong></div>
-        <div><span>LICENSE</span><strong>C12-0000505-LIC</strong></div>
-      </aside>
-    </section>
-
-    <section id="system" class="chapter chapter--left" data-chapter="02" data-scene="2">
-      <div class="chapter__copy chapter__copy--panel">
-        <p class="eyebrow">THE SYNGANIC SYSTEM</p>
-        <h2>Mineral precision. Biological depth.</h2>
-        <p>The cultivation method combines precise mineral nutrition with organic and biological inputs, then tracks the plant’s response through the cycle.</p>
-        <div class="balance-meter" aria-label="Synganic balance visualization">
-          <div><span>MINERAL</span><i></i></div>
-          <div><span>BIOLOGICAL</span><i></i></div>
-        </div>
-        <p class="instruction">Drag across the core to rotate it. Scroll to separate the system into its working layers.</p>
-      </div>
-    </section>
-
-    <section id="validation" class="chapter chapter--right" data-chapter="03" data-scene="3">
-      <div class="chapter__copy chapter__copy--panel">
-        <p class="eyebrow">VALIDATION LOOP</p>
-        <h2>Compliance is the floor. Performance is the test.</h2>
-        <p>Internal evaluation follows the qualities consumers actually notice: aroma intensity, moisture and water activity alignment, grind behavior, burn characteristics, texture, and batch consistency.</p>
-        <div class="metric-grid">
-          <span><b>AROMA</b><i>ACTIVE</i></span>
-          <span><b>BURN</b><i>READING</i></span>
-          <span><b>TEXTURE</b><i>STABLE</i></span>
-          <span><b>CONSISTENCY</b><i>LOCKED</i></span>
-        </div>
-      </div>
-    </section>
-
-    <section id="garden" class="chapter chapter--split chapter--garden" data-chapter="04" data-scene="4">
-      <div class="chapter__copy">
-        <p class="eyebrow">THE GARDEN</p>
-        <h2>A living system, not a decoration.</h2>
-        <p>Every environmental input changes the final experience. Irrigation behavior, harvest timing, drying targets, and post-harvest stability are treated as one connected system.</p>
-        <button class="button button--acid" id="scanButton" type="button">RUN ROOT SCAN</button>
-      </div>
-      <div class="garden-console" id="gardenConsole" aria-live="polite">
-        <div class="garden-console__screen">
-          <span>ROOT NETWORK</span>
-          <b id="scanStatus">STANDBY</b>
-          <i></i><i></i><i></i><i></i>
-        </div>
-        <p>Scroll signal becomes nutrient flow. Every chapter feeds the same core.</p>
-      </div>
-    </section>
-
-    <section id="flavor" class="chapter chapter--left" data-chapter="05" data-scene="5">
-      <div class="chapter__copy chapter__copy--panel">
-        <p class="eyebrow">FLOWER PERFORMANCE</p>
-        <h2>Flavor is a chain of decisions.</h2>
-        <p>Appearance earns attention. Clean combustion, expressive aroma, usable texture, and consistency earn trust.</p>
-        <div class="flavor-spectrum" aria-label="Flavor performance spectrum">
-          <span style="--p:88%">AROMA</span>
-          <span style="--p:82%">BURN</span>
-          <span style="--p:91%">TEXTURE</span>
-          <span style="--p:86%">STABILITY</span>
-        </div>
-      </div>
-    </section>
-
-    <section id="quiet" class="chapter chapter--quiet" data-chapter="06" data-scene="6">
-      <div class="quiet-copy">
-        <p class="eyebrow">SIGNAL HOLD</p>
-        <h2>Good flower does not need a loud explanation.</h2>
-        <p>It needs a clean burn, a clear profile, and the discipline to repeat the result.</p>
-        <span>LISTEN FOR THE CORE</span>
-      </div>
-    </section>
-
-    <section id="game" class="chapter chapter--game" data-chapter="07" data-scene="7">
-      <div class="game-intro" id="gameIntro">
-        <p class="eyebrow">FINAL PROTOCOL</p>
-        <h2>TERPENE DEFENSE</h2>
-        <p>The cultivation system is now operational. Balance mineral and biological charge, protect the cultivar core, and destroy the Bland Batch before it sterilizes the signal.</p>
-        <div class="control-grid">
-          <span><b>MOVE</b> WASD / ARROWS / DRAG</span>
-          <span><b>FIRE</b> SPACE / AUTO-FIRE</span>
-          <span><b>BLOOM</b> SHIFT / ABILITY BUTTON</span>
-          <span><b>PAUSE</b> P / ESC</span>
-        </div>
-        <div class="game-intro__actions">
-          <button id="startGame" class="button button--acid" type="button">INITIATE DEFENSE</button>
-          <button id="viewEnding" class="button button--ghost" type="button">VIEW ENDING WITHOUT PLAYING</button>
-        </div>
-      </div>
-      <div id="gameShell" class="game-shell" hidden>
-        <canvas id="gameCanvas" aria-label="Terpene Defense arcade game"></canvas>
-        <div class="game-hud" aria-live="polite">
-          <div><span>SCORE</span><b id="hudScore">000000</b></div>
-          <div><span>COMBO</span><b id="hudCombo">x1</b></div>
-          <div><span>WAVE</span><b id="hudWave">01</b></div>
-          <div><span>CORE</span><b id="hudHealth">100%</b></div>
-        </div>
-        <div class="charge-hud" aria-label="Synganic charge balance">
-          <div class="charge charge--mineral"><span>MINERAL</span><i id="mineralCharge"></i></div>
-          <div class="charge charge--bio"><span>BIOLOGICAL</span><i id="bioCharge"></i></div>
-        </div>
-        <button id="mobileAbility" class="mobile-ability" type="button">FULL<br/>BLOOM</button>
-        <div id="gameOverlay" class="game-overlay" hidden>
-          <p class="eyebrow" id="overlayEyebrow">SYSTEM PAUSED</p>
-          <h3 id="overlayTitle">HOLD THE SIGNAL</h3>
-          <p id="overlayCopy">The chamber will wait. For once, technology shows restraint.</p>
-          <div class="game-overlay__actions">
-            <button id="resumeGame" class="button button--acid" type="button">RESUME</button>
-            <button id="restartGame" class="button button--ghost" type="button">RESTART</button>
-            <button id="exitGame" class="button button--ghost" type="button">RETURN TO EXPERIENCE</button>
-          </div>
-        </div>
-      </div>
-      <div id="ending" class="ending" hidden>
-        <p class="eyebrow">CYCLE COMPLETE</p>
-        <h2>Cultivate with intention.<br/>Validate with evidence.<br/><em>Keep the signal alive.</em></h2>
-        <p>PowrHouse is a cultivation and R&amp;D platform. Product availability is subject to local law, licensing, and retailer participation.</p>
-        <div class="ending__actions">
-          <a class="button button--acid" href="https://www.powr.house/" target="_blank" rel="noreferrer">VISIT POWR.HOUSE</a>
-          <button id="replayGame" class="button button--ghost" type="button">REPLAY DEFENSE</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="brand-lockup brand-lockup--large" aria-label="PowrHouse">Powr<span>House.</span></div>
-    <div>
-      <p>For use only by adults 21 years of age and older. Keep out of reach of children and pets. Please consume responsibly. There may be health risks associated with cannabis use.</p>
-      <p>License #C12-0000505-LIC · ZONA-RA GROUP | PowrHouse MGMT</p>
-    </div>
-    <div class="footer-links">
-      <a href="https://www.powr.house/terms-and-conditions" target="_blank" rel="noreferrer">Terms</a>
-      <a href="https://www.powr.house/faqs" target="_blank" rel="noreferrer">FAQs</a>
-      <a href="./SOURCE_LEDGER.md">Sources</a>
-    </div>
-  </footer>
-
-  <noscript>
-    <div class="noscript">This experience needs JavaScript for the procedural scene and game. The factual copy remains available in the page source, because at least one thing on the internet should fail honestly.</div>
-  </noscript>
-
-  <script type="module" src="./main.js"></script>
-</body>
-</html>
+<body><main><div class="brand">Powr<span>House.</span></div><p id="status">ASSEMBLING CULTIVATION SYSTEM · 0%</p><div class="track"><div id="bar" class="bar"></div></div><pre id="error" class="error" hidden></pre></main>
+<script>
+(async()=>{
+const files=["./payload/01.b64", "./payload/02.b64", "./payload/03.b64", "./payload/04.b64"];
+const compressedHash='466efb5117c2e01dec69edc26b0883275106a539c52c32e5af811d32de8225aa',htmlHash='66840bc2adca4f91836f4db1323e3a865d66be70636011501bd4e4a47802ec7d';
+const status=document.getElementById('status'),bar=document.getElementById('bar'),errorBox=document.getElementById('error');
+const hex=buffer=>[...new Uint8Array(buffer)].map(v=>v.toString(16).padStart(2,'0')).join('');
+try{
+ if(typeof DecompressionStream==='undefined') throw new Error('This browser does not support the required gzip decoder. Use a current Safari, Chrome, Edge, or Firefox release.');
+ let encoded='';
+ for(let i=0;i<files.length;i++){const response=await fetch(files[i],{cache:'no-store'});if(!response.ok)throw new Error(`Payload ${i+1} failed: HTTP ${response.status}`);encoded+=(await response.text()).trim();const pct=Math.round(((i+1)/files.length)*70);status.textContent=`ASSEMBLING CULTIVATION SYSTEM · ${pct}%`;bar.style.width=`${pct}%`;}
+ const raw=atob(encoded),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+ const actualCompressed=hex(await crypto.subtle.digest('SHA-256',bytes));if(actualCompressed!==compressedHash)throw new Error(`Compressed payload integrity mismatch. Expected ${compressedHash}, received ${actualCompressed}.`);
+ status.textContent='DECOMPRESSING EXPERIENCE · 82%';bar.style.width='82%';
+ const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));const html=await new Response(stream).text();
+ const actualHtml=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(html)));if(actualHtml!==htmlHash)throw new Error(`Decoded site integrity mismatch. Expected ${htmlHash}, received ${actualHtml}.`);
+ status.textContent='SYSTEM VERIFIED · 100%';bar.style.width='100%';document.open();document.write(html);document.close();
+}catch(error){status.textContent='LOAD FAILURE';errorBox.hidden=false;errorBox.textContent=error.message+'\n\nReload once. GitHub CDN caches can briefly serve an incomplete commit immediately after publishing.';}
+})();
+</script></body></html>
