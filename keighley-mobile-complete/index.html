@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="A mobile-first interactive study of the IMAX Keighley camera.">
+<title>The Keighley — Mobile Experience</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body data-section="0">
+<div id="stage" aria-hidden="true">
+  <canvas id="scene"></canvas>
+  <img id="static-camera" src="./camera.svg" alt="">
+  <div id="vignette"></div>
+  <div id="letterbox"></div>
+  <div id="transport-flash"></div>
+</div>
+<div id="status"><span class="status-dot"></span><span id="status-copy">Canvas renderer · ready</span></div>
+<div id="progress" aria-hidden="true"><i></i></div>
+
+<main>
+<section class="section hero active" data-index="0">
+  <div class="copy">
+    <p class="kicker">IMAX 15/70 · Mobile camera study</p>
+    <h1><span>The</span><span>Keighley.</span></h1>
+    <p class="sub">A scroll-driven large-format camera experience rebuilt specifically for phones.</p>
+    <p class="gesture">Scroll to disassemble the camera</p>
+  </div>
+</section>
+<section class="section" data-index="1">
+  <div class="copy">
+    <p class="kicker">01 · The format</p><h2>Fifteen perf.</h2>
+    <p class="body">IMAX 15/70 runs horizontal 65mm film through a fifteen-perforation frame. At 24 frames per second, more than five feet of film crosses the gate every second.</p>
+    <p class="note">334 ft/min · 5.57 ft/sec · horizontal transport</p>
+  </div>
+</section>
+<section class="section" data-index="2">
+  <div class="copy">
+    <p class="kicker">02 · Anatomy</p><h2>Built to separate.</h2>
+    <p class="body">Choose an assembly below. Every component moves to a stable exploded position, while the selected part receives an amber inspection light.</p>
+  </div>
+</section>
+<section class="section" data-index="3">
+  <div class="copy">
+    <p class="kicker">03 · Dialogue</p><h2>The blimp.</h2>
+    <p class="body">A sound-isolating enclosure closes around the camera for dialogue work. The housing is shown as separate structural panels, so the camera remains visible.</p>
+  </div>
+</section>
+<section class="section" data-index="4">
+  <div class="copy">
+    <p class="kicker">04 · Eyelines</p><h2>The periscope.</h2>
+    <p class="body">A mirrored viewing path rises above the housing, allowing performers to maintain eyelines while the large camera occupies the space between them.</p>
+  </div>
+</section>
+<section class="section" data-index="5">
+  <div class="copy">
+    <p class="kicker">05 · Scale</p><h2>Built for a feature.</h2>
+    <p class="body">The new camera system was developed for sustained large-format production rather than isolated spectacle shots.</p>
+    <div class="stats">
+      <div class="stat"><strong>2.1M</strong><span>Feet of film photographed</span></div>
+      <div class="stat"><strong>1.43:1</strong><span>Full IMAX presentation</span></div>
+      <div class="stat"><strong>24 FPS</strong><span>Five and a half feet each second</span></div>
+    </div>
+  </div>
+</section>
+<section class="section operator-section" data-index="6">
+  <div class="copy">
+    <p class="kicker">06 · Operate</p><h2>Shoot the Odyssey.</h2>
+    <p class="body">Drag horizontally to pan. Rack focus between the foreground water and the ship, tilt the frame, compare formats, then roll the transport.</p>
+  </div>
+</section>
+<section class="section legacy" data-index="7">
+  <div class="copy">
+    <p class="kicker">07 · Legacy</p><h2>The Keighley.</h2>
+    <p class="body">Named in honor of David and Patricia Keighley, whose work helped define how large-format images reached the screen.</p>
+    <p class="note">A mobile study · procedural artwork · no external runtime</p>
+  </div>
+</section>
+</main>
+
+<section id="anatomy-ui" class="bottom-sheet" aria-label="Camera anatomy controls">
+  <div class="sheet-handle"></div>
+  <div class="part-tabs" role="tablist" aria-label="Camera assemblies">
+    <button type="button" data-part="body" class="active" role="tab" aria-selected="true">Body</button>
+    <button type="button" data-part="lens" role="tab" aria-selected="false">Lens</button>
+    <button type="button" data-part="magazine" role="tab" aria-selected="false">Magazine</button>
+    <button type="button" data-part="lcd" role="tab" aria-selected="false">LCD</button>
+    <button type="button" data-part="finder" role="tab" aria-selected="false">Finder</button>
+  </div>
+  <p id="part-copy">Carbon-fiber center body, machined frame, recessed hardware, and the horizontal film gate.</p>
+</section>
+
+<section id="operator-ui" class="bottom-sheet" aria-label="Camera operator controls">
+  <div class="sheet-handle"></div>
+  <div class="op-head"><span>Live optical tap · 24.000</span><span class="rec-dot" aria-hidden="true"></span></div>
+  <div class="controls">
+    <div class="control"><label for="focus"><span>Rack focus</span><output id="focus-out">Ship</output></label><input id="focus" type="range" min="0" max="100" value="72"></div>
+    <div class="control"><label for="tilt"><span>Camera tilt</span><output id="tilt-out">Level</output></label><input id="tilt" type="range" min="-100" max="100" value="0"></div>
+    <div class="buttons"><button type="button" id="imax" class="active" aria-pressed="true">IMAX 1.43</button><button type="button" id="standard" aria-pressed="false">Standard 2.39</button></div>
+  </div>
+  <button type="button" class="roll" id="roll">Roll camera</button>
+  <p class="drag-note">Drag the picture horizontally to pan</p>
+</section>
+
+<noscript><div class="noscript">JavaScript is required for the interactive camera. The page content remains readable without it.</div></noscript>
+<script src="./app.js" defer></script>
+</body>
+</html>
