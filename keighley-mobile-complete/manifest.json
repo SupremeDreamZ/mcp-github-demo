@@ -1,0 +1,54 @@
+{
+  "project": "The Keighley — self-contained mobile experience",
+  "version": "2026-07-24-final",
+  "runtime": "Native HTML/CSS/JavaScript Canvas 2D; no external dependencies",
+  "entrypoint": "index.html",
+  "qa_viewports": [
+    "320x568",
+    "390x844",
+    "430x932",
+    "844x390"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 5952,
+      "sha256": "e8bc2f57b9a6fd27869f0adb3e1e0c8beb0af0bd47eccdd15f9f6b6aa07c5a89"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 9638,
+      "sha256": "9097044f2e116254fb5e60fdded7100d853858671c6ab6f3dafa1b537b829102"
+    },
+    {
+      "path": "core.js",
+      "bytes": 4453,
+      "sha256": "10cfc1c4263c9dd3feb444b52de598a11b10041804b97078a18c3478754ab1ec"
+    },
+    {
+      "path": "camera.js",
+      "bytes": 10514,
+      "sha256": "9869dcc7c92f16116f8c229dbb523314abc9b64446efbccab3c7f62a6ad122ba"
+    },
+    {
+      "path": "scene.js",
+      "bytes": 7660,
+      "sha256": "a30315fdbeb5a63ccb1546069d74390884d5143f2eb5ebd0e94b135ff979243d"
+    },
+    {
+      "path": "controls.js",
+      "bytes": 3259,
+      "sha256": "8950a24ab35ad17b7748013e338a5814510e25c9521fa50c5d64b5e2f69fba64"
+    },
+    {
+      "path": "camera.svg",
+      "bytes": 2826,
+      "sha256": "ebc14224aadc3ca5d7cf368d0f20f4a433e70852737efcff24794cde8ebbf29b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1125,
+      "sha256": "4338b267113ae6e5190f80d46c4e471652d4a42231e2fbdcb1e3006d045af837"
+    }
+  ]
+}
