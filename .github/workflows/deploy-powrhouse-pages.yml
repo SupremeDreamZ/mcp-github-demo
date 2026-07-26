@@ -28,17 +28,18 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Verify PowrHouse publish directory
+      - name: Verify stable PowrHouse build
         run: |
-          test -f ./powrhouse-live/index.html
-          test -f ./powrhouse-live/payload/ref-v5/01.b64
-          test -f ./powrhouse-live/payload/ref-v5/02.b64
-          find ./powrhouse-live -maxdepth 3 -type f -print
+          test -f ./powrhouse-exact-live/index.html
+          for i in 01 02 03 04 05 06 07 08 09; do
+            test -f "./powrhouse-exact-live/payload/${i}.b64"
+          done
+          find ./powrhouse-exact-live -maxdepth 2 -type f -print
 
-      - name: Upload PowrHouse site
+      - name: Upload stable PowrHouse site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./powrhouse-live
+          path: ./powrhouse-exact-live
 
       - name: Deploy to GitHub Pages
         id: deployment
