@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "powrhouse-live/DEPLOY_READY"
   workflow_dispatch:
 
 permissions:
@@ -29,6 +27,13 @@ jobs:
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+
+      - name: Verify PowrHouse publish directory
+        run: |
+          test -f ./powrhouse-live/index.html
+          test -f ./powrhouse-live/payload/ref-v5/01.b64
+          test -f ./powrhouse-live/payload/ref-v5/02.b64
+          find ./powrhouse-live -maxdepth 3 -type f -print
 
       - name: Upload PowrHouse site
         uses: actions/upload-pages-artifact@v4
