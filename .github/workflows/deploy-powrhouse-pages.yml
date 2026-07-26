@@ -5,8 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "powrhouse-live/**"
-      - ".github/workflows/deploy-powrhouse-pages.yml"
+      - "powrhouse-live/DEPLOY_READY"
   workflow_dispatch:
 
 permissions:
@@ -16,7 +15,7 @@ permissions:
 
 concurrency:
   group: github-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -29,7 +28,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@v5
 
       - name: Upload PowrHouse site
         uses: actions/upload-pages-artifact@v4
