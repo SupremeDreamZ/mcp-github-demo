@@ -1,3 +1,4 @@
 PowrHouse GitHub Pages deployment trigger
-Build: reference visual shell v5
-Commit: 9adc98d31e526431cff16496fa397d2ebd289ccf
+Build: server-built browser-safe JPEG v12
+Source workflow commit: 502d6be78a5a3a7dcafb3852cad5fde23405cf29
+Triggered after chunk-loader retirement.
