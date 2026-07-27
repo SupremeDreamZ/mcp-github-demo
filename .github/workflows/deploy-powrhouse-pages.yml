@@ -28,15 +28,15 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Verify stable PowrHouse build
+      - name: Verify PowrHouse publish directory
         run: |
           test -f ./powrhouse-exact-live/index.html
-          for i in 01 02 03 04 05 06 07 08 09; do
-            test -f "./powrhouse-exact-live/payload/${i}.b64"
+          for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16; do
+            test -s "./powrhouse-exact-live/payload/${i}.b64"
           done
           find ./powrhouse-exact-live -maxdepth 2 -type f -print
 
-      - name: Upload stable PowrHouse site
+      - name: Upload PowrHouse site
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./powrhouse-exact-live
