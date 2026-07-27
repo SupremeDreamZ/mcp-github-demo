@@ -28,18 +28,188 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Verify PowrHouse publish directory
+      - name: Build browser-safe PowrHouse site
+        shell: bash
         run: |
-          test -f ./powrhouse-exact-live/index.html
-          for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16; do
-            test -s "./powrhouse-exact-live/payload/${i}.b64"
-          done
-          find ./powrhouse-exact-live -maxdepth 2 -type f -print
+          set -euo pipefail
+          rm -rf ./_site
+          mkdir -p ./_site
+
+          test -s ./powrhouse-live/payload/ref-v5/01.b64
+          test -s ./powrhouse-live/payload/ref-v5/02.b64
+
+          cat \
+            ./powrhouse-live/payload/ref-v5/01.b64 \
+            ./powrhouse-live/payload/ref-v5/02.b64 \
+            | tr -d '\r\n\t ' \
+            | base64 --decode \
+            > ./_site/reference.avif
+
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+
+          ffmpeg \
+            -y \
+            -hide_banner \
+            -loglevel error \
+            -i ./_site/reference.avif \
+            -frames:v 1 \
+            -q:v 2 \
+            ./_site/reference.jpg
+
+          rm ./_site/reference.avif
+          test -s ./_site/reference.jpg
+
+          dimensions="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 ./_site/reference.jpg)"
+          test "$dimensions" = "864x1536"
+
+          cat > ./_site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+            <meta name="theme-color" content="#050505">
+            <meta name="description" content="PowrHouse illustrated storefront. Adults 21+ only.">
+            <title>PowrHouse</title>
+            <style>
+              :root{--ink:#050505;--acid:#a8ff00;--cream:#f3f1e8;--red:#ff253a}
+              *{box-sizing:border-box}
+              html,body{margin:0;min-height:100%;background:var(--ink);color:var(--cream);font-family:Arial,Helvetica,sans-serif}
+              body.locked{overflow:hidden}
+              button,a{font:inherit}
+              button:focus-visible,a:focus-visible{outline:3px solid var(--acid);outline-offset:3px}
+              .loading{min-height:100svh;display:grid;place-items:center;padding:24px;background:#050505}
+              .loading-card{width:min(86vw,540px)}
+              .brand{margin:0 0 18px;font:900 clamp(2.25rem,9vw,4.8rem)/.9 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-style:italic;color:#050505;-webkit-text-stroke:2px var(--red);text-shadow:3px 3px 0 #460009}
+              .status{font:700 .8rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;color:#a7b19f}
+              .error{padding:14px;border:1px solid #ff5d5d;background:#160505;color:#ff9494;line-height:1.45}
+              .site{display:none;width:min(100%,864px);margin:auto;position:relative;background:#050505}
+              .site.ready{display:block}
+              .artboard{display:block;width:100%;height:auto}
+              .overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:20px;backdrop-filter:blur(8px)}
+              .overlay[hidden]{display:none}
+              .gate{width:min(92vw,520px);padding:clamp(24px,5vw,38px);background:#080808;border:2px solid var(--acid);box-shadow:9px 9px 0 #35104b}
+              .gate h1{margin:.35em 0 .25em;font-size:clamp(2.1rem,8vw,4.4rem);line-height:.92;text-transform:uppercase}
+              .gate p{line-height:1.5;color:#c7cdc2}
+              .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+              .btn{min-height:48px;padding:12px 18px;border:2px solid var(--acid);font-weight:900;text-transform:uppercase;cursor:pointer}
+              .primary{background:var(--acid);color:#050505}
+              .secondary{background:#050505;color:#fff}
+              .hotspot{position:absolute;z-index:5;border:0;background:transparent;color:transparent;cursor:pointer;padding:0}
+              .hs-cart{left:88.7%;top:.65%;width:4.7%;height:2.1%}
+              .hs-menu{left:94.2%;top:.5%;width:4.7%;height:2.5%}
+              .hs-garden{left:4%;top:41.4%;width:17.3%;height:2.25%}
+              .hs-strains{left:3.5%;top:77.4%;width:16.2%;height:1.95%}
+              .hs-find{left:3.4%;top:89.3%;width:15.4%;height:1.85%}
+              .drawer-wrap{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);display:flex;justify-content:flex-end}
+              .drawer-wrap[hidden]{display:none}
+              .drawer{height:100%;width:min(88vw,420px);padding:70px 28px 30px;background:#050605;border-left:2px solid var(--acid);overflow:auto}
+              .drawer-close{position:absolute;right:14px;top:14px;width:44px;height:44px;background:#050505;color:#fff;border:1px solid var(--acid);font-size:24px;cursor:pointer}
+              .drawer h2{font-size:34px;text-transform:uppercase}
+              .drawer nav a{display:block;padding:15px 0;border-bottom:1px solid #273021;color:#fff;text-decoration:none;font-weight:900;text-transform:uppercase}
+              .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+              @media(max-width:520px){.site{width:100%}.gate{padding:24px 20px}}
+            </style>
+          </head>
+          <body class="locked">
+            <div id="age-gate" class="overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+              <section class="gate">
+                <div class="brand" aria-label="PowrHouse">PowrHouse.</div>
+                <h1 id="gate-title">Adults only.<br>Are you 21+?</h1>
+                <p>This cannabis-related brand experience is intended only for adults 21 years of age or older.</p>
+                <div class="actions">
+                  <button id="enter" class="btn primary" type="button">I am 21 or older</button>
+                  <button id="leave" class="btn secondary" type="button">I am under 21</button>
+                </div>
+                <p id="gate-message" hidden></p>
+              </section>
+            </div>
+
+            <div id="loading" class="loading">
+              <div class="loading-card">
+                <div class="brand">PowrHouse.</div>
+                <p id="status" class="status">LOADING PUBLISHED JPEG</p>
+                <p id="error" class="error" hidden></p>
+              </div>
+            </div>
+
+            <main id="site" class="site" aria-label="PowrHouse website">
+              <img id="artboard" class="artboard" src="./reference.jpg?v=11" width="864" height="1536" alt="Illustrated PowrHouse storefront featuring a cosmic cannabis flower, cultivation garden, quality process, featured flavors, retailer locator, and footer.">
+              <button class="hotspot hs-cart" id="open-cart" aria-label="Open cart"></button>
+              <button class="hotspot hs-menu" id="open-menu" aria-label="Open menu"></button>
+              <a class="hotspot hs-garden" href="#garden" aria-label="See the garden"></a>
+              <a class="hotspot hs-strains" href="#flavors" aria-label="View strains"></a>
+              <a class="hotspot hs-find" href="#retail" aria-label="Find PowrHouse"></a>
+              <span id="garden" class="sr-only">The Garden</span>
+              <span id="flavors" class="sr-only">Featured Flavors</span>
+              <span id="retail" class="sr-only">Find PowrHouse</span>
+            </main>
+
+            <div id="drawer-wrap" class="drawer-wrap" hidden>
+              <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+                <button id="drawer-close" class="drawer-close" aria-label="Close panel">×</button>
+                <h2 id="drawer-title">PowrHouse</h2>
+                <p id="drawer-copy"></p>
+                <nav aria-label="Site sections">
+                  <a href="#garden">The Garden</a>
+                  <a href="#flavors">Featured Flavors</a>
+                  <a href="#retail">Find PowrHouse</a>
+                </nav>
+              </aside>
+            </div>
+
+            <script>
+              (()=>{
+                const gate=document.getElementById('age-gate');
+                const enter=document.getElementById('enter');
+                const leave=document.getElementById('leave');
+                const gateMessage=document.getElementById('gate-message');
+                const loading=document.getElementById('loading');
+                const site=document.getElementById('site');
+                const artboard=document.getElementById('artboard');
+                const error=document.getElementById('error');
+                const drawerWrap=document.getElementById('drawer-wrap');
+                const drawerCopy=document.getElementById('drawer-copy');
+                const drawerClose=document.getElementById('drawer-close');
+
+                const getAge=()=>{try{return localStorage.getItem('powrhouse-age-ok')}catch(e){return null}};
+                const setAge=()=>{try{localStorage.setItem('powrhouse-age-ok','1')}catch(e){}};
+                const unlock=()=>{gate.hidden=true;document.body.classList.remove('locked')};
+
+                if(getAge()==='1') unlock(); else enter.focus();
+                enter.addEventListener('click',()=>{setAge();unlock()});
+                leave.addEventListener('click',()=>{gateMessage.hidden=false;gateMessage.textContent='You must be 21 or older to enter.'});
+
+                const showSite=()=>{loading.remove();site.classList.add('ready')};
+                if(artboard.complete && artboard.naturalWidth>0) showSite();
+                else artboard.addEventListener('load',showSite,{once:true});
+                artboard.addEventListener('error',()=>{document.getElementById('status').textContent='IMAGE LOAD FAILURE';error.hidden=false;error.textContent='The published JPEG could not be loaded. The GitHub deployment did not finish correctly.'},{once:true});
+
+                const openDrawer=copy=>{drawerCopy.textContent=copy;drawerWrap.hidden=false;document.body.classList.add('locked');drawerClose.focus()};
+                const closeDrawer=()=>{drawerWrap.hidden=true;document.body.classList.remove('locked')};
+                document.getElementById('open-menu').addEventListener('click',()=>openDrawer('Explore the reference-locked PowrHouse storefront.'));
+                document.getElementById('open-cart').addEventListener('click',()=>openDrawer('Online purchasing is not connected in this preview.'));
+                drawerClose.addEventListener('click',closeDrawer);
+                drawerWrap.addEventListener('click',event=>{if(event.target===drawerWrap)closeDrawer()});
+                drawerWrap.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeDrawer));
+                document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!drawerWrap.hidden)closeDrawer()});
+              })();
+            </script>
+          </body>
+          </html>
+          HTML
+
+          touch ./_site/.nojekyll
+          printf 'Built files:\n'
+          find ./_site -maxdepth 1 -type f -printf '%f %s bytes\n'
 
       - name: Upload PowrHouse site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./powrhouse-exact-live
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         id: deployment
